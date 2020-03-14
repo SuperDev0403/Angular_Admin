@@ -1,0 +1,159 @@
+<div class="container-fluid" *ngIf="role=='client'">
+  <!-- start page title -->
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box">
+        <div class="page-title-right">
+          <form class="form-inline">
+            <div class="form-group">
+              <select class="custom-select" id="marketplace" (change)="onChangeMarketplacecode($event.target.value)">
+                <option *ngFor="let marketplace of marketplaces" value={{marketplace.marketplace_id}}>
+                  {{marketplace.marketplace_code}}
+                </option>
+              </select>
+            </div>
+            
+          </form>
+        </div>
+        <h4 class="page-title">Brand Reputation</h4>
+      </div>
+    </div>
+  </div>
+  <!-- end page title -->
+
+  <div class="row" *ngIf="!loading">
+    <!-- widget -->
+    <ng-template [ngTemplateOutlet]="WidgetData" [ngTemplateOutletContext]="{widget: widget}"
+      *ngFor="let widget of widgetData"></ng-template>
+  </div>
+  <div class="row">
+    <div class="col-12 text-center" *ngIf="loading">
+        <img src="assets/images/loading.gif" alt="" class="loading">
+    </div>
+  </div>
+  <div *ngIf="!loading">
+    <div class="row">
+      <div class="col-xl-4">
+        <div class="card-box" style="height: 435px;">
+          <h4 class="header-title mb-1">Total Product Rating</h4>
+
+          <div class="widget-chart text-center" dir="ltr">
+
+            <apx-chart [chart]="revenueRadialChart.chart" [series]="revenueRadialChart.series"
+              [plotOptions]="revenueRadialChart.plotOptions" [colors]="revenueRadialChart.colors"
+              [stroke]="revenueRadialChart.stroke"></apx-chart>
+            <h5 class="text-muted">Total Reviews Made</h5>
+            <h2>{{ total_reviews }}</h2>
+
+            <p class="text-muted w-75 mx-auto sp-line-2"> </p>
+
+            <div class="row mt-3">
+              <div class="col-4">
+                <p class="text-muted font-15 mb-1 text-truncate">Positive</p>
+                <h4>
+                  <i *ngIf="positive_pct>0" class="fe-arrow-up text-success mr-1"></i>
+                  <i *ngIf="positive_pct<0" class="fe-arrow-down text-danger mr-1"></i>
+                  {{positive_num}} ({{positive_pct}}%)
+                </h4>
+              </div>
+              <div class="col-4">
+                <p class="text-muted font-15 mb-1 text-truncate">Neutral</p>
+                <h4>
+                  <i *ngIf="neutral_pct>0" class="fe-arrow-up text-success mr-1"></i>
+                  <i *ngIf="neutral_pct<0" class="fe-arrow-down text-danger mr-1"></i>
+                  {{neutral_num}} ({{neutral_pct}}%)
+                </h4>
+              </div>
+              <div class="col-4">
+                <p class="text-muted font-15 mb-1 text-truncate">Negative</p>
+                <h4>
+                  <i *ngIf="negative_pct>0" class="fe-arrow-up text-success mr-1"></i>
+                  <i *ngIf="negative_pct<0" class="fe-arrow-down text-danger mr-1"></i>
+                  {{negative_num}} ({{negative_pct}}%)
+                </h4>
+              </div>
+            </div>
+
+          </div>
+        </div> <!-- end card-box -->
+      </div> <!-- end col-->
+
+      <div class="col-xl-8">
+        <div class="card-box" style="height: 435px;">
+          <h4 class="header-title mb-1">Customer review ratings over time</h4>
+          <!-- review rating chart -->
+          <div>
+            <apx-chart class="apex-charts" [series]="stackBarChart.series" [chart]="stackBarChart.chart"
+              [plotOptions]="stackBarChart.plotOptions" [yaxis]="stackBarChart.yaxis" [grid]="stackBarChart.grid"
+              [tooltip]="stackBarChart.tooltip" [stroke]="stackBarChart.stroke"
+              [dataLabels]="stackBarChart.dataLabels" [xaxis]="stackBarChart.xaxis" [legend]="stackBarChart.legend"
+              [colors]="stackBarChart.colors" [fill]="stackBarChart.fill">
+            </apx-chart>
+          </div><!-- end chart -->
+        </div> <!-- end card-box -->
+      </div> <!-- end col-->
+    </div>
+
+    <div class="row">
+      <div class="col-xl-6">
+        <div class="card-box">
+          <div class="row">
+            <div class="col-6">
+              <h4 class="header-title mb-3">Product Reputation</h4>
+            </div>
+            <div class="col-6">
+              <p class="text-right">Products: {{product_num}}</p>
+            </div>
+          </div>
+          <div>
+            <apx-chart class="apex-charts" [series]="productReputationBarChart.series" [chart]="productReputationBarChart.chart"
+              [plotOptions]="productReputationBarChart.plotOptions" [grid]="productReputationBarChart.grid" [states]="productReputationBarChart.states"
+              [dataLabels]="productReputationBarChart.dataLabels" [xaxis]="productReputationBarChart.xaxis" [colors]="productReputationBarChart.colors">
+            </apx-chart>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-xl-6">
+        <div class="card-box">
+          <div class="row">
+            <div class="col-6">
+              <h4 class="header-title mb-3">Seller Reputation</h4>
+            </div>
+            <div class="col-6">
+              <p class="text-right">Sellers: {{seller_num}}</p>
+            </div>
+          </div>
+          <div>
+            <apx-chart class="apex-charts" [series]="sellerReputationBarChart.series" [chart]="sellerReputationBarChart.chart"
+              [plotOptions]="sellerReputationBarChart.plotOptions" [grid]="sellerReputationBarChart.grid" [states]="sellerReputationBarChart.states"
+              [dataLabels]="sellerReputationBarChart.dataLabels" [xaxis]="sellerReputationBarChart.xaxis" [colors]="sellerReputationBarChart.colors">
+            </apx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Widget data -->
+<ng-template #WidgetData let-widget='widget'>
+  <div class="col-md-6 col-xl-3">
+    <div class="widget-rounded-circle card-box">
+      <div class="row">
+        <div class="col-6">
+          <div class="avatar-lg rounded-circle bg-soft-{{ widget.color }} border-{{ widget.color }} border">
+            <i class="{{ widget.icon }} font-22 avatar-title text-{{ widget.color }}"></i>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="text-right">
+            <h3 class="text-dark mt-1" [CountTo]="widget.value" [from]="0" [duration]="1">{{ widget.value }}</h3>
+            <p class="text-muted mb-1 text-truncate">{{ widget.text }}</p>
+          </div>
+        </div>
+      </div> <!-- end row-->
+    </div> <!-- end widget-rounded-circle-->
+  </div> <!-- end col-->
+</ng-template>

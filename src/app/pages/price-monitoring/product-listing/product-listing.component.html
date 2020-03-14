@@ -1,0 +1,112 @@
+<div class="container-fluid" *ngIf="role == 'client'">
+  <app-page-title [title]="title" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="row">
+        <div class="col-12 text-center mt-5" *ngIf="loadingProductListing">
+            <img src="assets/images/loading.gif" alt="" class="loading">
+        </div>
+      </div>
+      <div class="card" *ngIf="!loadingProductListing">
+        <div class="card-body">
+          <h4 class="header-title">{{ "menu.product_listing" | translate }}</h4>
+          <p class="text-muted font-13 mb-4">
+
+          </p>
+          <div class="row mb-md-2">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length" id="tickets-table_length"><label
+                  class="d-inline-flex align-items-center">{{ "main.show" | translate }}
+                  <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+                    [(ngModel)]="service.pageSize"
+                    class="custom-select custom-select-sm form-control form-control-sm mx-2">
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="25">25</option>
+                    <option [ngValue]="50">50</option>
+                    <option [ngValue]="100">100</option>
+                  </select> {{ "main.entries" | translate }}</label></div>
+            </div>
+            <!-- Search -->
+            <div class="col-sm-12 col-md-6">
+              <div id="tickets-table_filter" class="dataTables_filter text-md-right"><label
+                  class="d-inline-flex align-items-center">{{ "main.search" | translate }}:
+                  <input type="text" name="searchTerm" class="form-control form-control-sm ml-2"
+                    aria-controls="tickets-table" [(ngModel)]="service.searchTerm"></label>
+                <button type="button" (click)="exportCSV()" class="btn btn-light mb-1 ml-3">{{ "main.export" | translate }}</button>
+              </div>
+            </div>
+            
+            <!-- End search -->
+          </div>
+          <!-- Table -->
+          <div class="table-responsive">
+            <table id="basic-datatable" class="table datatables dt-responsive nowrap">
+              <thead>
+                <tr>
+                  <th>{{ "main.thumbnail" | translate }}</th>
+                  <th sortable="ean" (sort)="onSort($event)">EAN</th>
+                  <th sortable="productName" (sort)="onSort($event)">{{ "main.name" | translate }}</th>
+                  <th sortable="rrp" (sort)="onSort($event)">PVR</th>
+                  <th sortable="max_price" (sort)="onSort($event)">{{ "main.highest" | translate }}</th>
+                  <th sortable="min_price" (sort)="onSort($event)">{{ "main.lowest" | translate }}</th>
+                  <th sortable="available" (sort)="onSort($event)">{{ "main.available" | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr tr *ngFor="let table of tables$ | async">
+                  <td class="text-center">
+                    <a [routerLink]="['/product-comparison/', table.ean, table.productName]">
+                      <img src="{{ table.photoUri }}" alt="" class="thumbnail">
+                    </a>
+                  </td>                  
+                  <td>
+                    <a [routerLink]="['/monitor/product-comparison/', table.ean, table.productName, table.photoUri]">
+                      <ngb-highlight [result]="table.ean" [term]="service.searchTerm"></ngb-highlight>
+                    </a>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="table.productName" [term]="service.searchTerm"></ngb-highlight>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="table.rrp" [term]="service.searchTerm"></ngb-highlight>
+                    <span>&euro;</span>
+                  </td>
+                  <td>
+                    <ngb-highlight [result]="table.max_price" [term]="service.searchTerm"></ngb-highlight>
+                    <span>&euro;</span>
+                  </td>    
+                  <td>
+                    <ngb-highlight [result]="table.min_price" [term]="service.searchTerm"></ngb-highlight>
+                    <span>&euro;</span>
+                  </td>                                  
+                  <td>
+                    <label *ngIf="table.available" class="custom-badge bg-soft-success text-success">{{ "main.available" | translate }}</label>
+                    <label *ngIf="!table.available" class="custom-badge bg-soft-danger text-danger">{{ "main.not_available" | translate }}</label>
+                  </td>              
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- End table -->
+          <div class="row justify-content-md-between align-items-md-center mt-2">
+            <div class="col-sm-12 col-md-5">
+              <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">Showing from
+                {{service.startIndex}} to
+                {{service.endIndex}} of {{service.totalRecords}}
+                records
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="col-sm-12 col-md-5">
+              <div class="text-md-right float-md-right">
+                <ngb-pagination [collectionSize]="total$ | async" [(page)]="service.page" [pageSize]="service.pageSize" [maxSize]="5">
+                </ngb-pagination>
+              </div>
+            </div>
+            <!-- End Pagination -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

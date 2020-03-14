@@ -1,0 +1,108 @@
+<!-- ========== Left Sidebar Start ========== -->
+<ng-template #contentTemplate>
+    <!--- Sidemenu -->
+    <div id="sidebar-menu">
+        <ul class="metismenu" id="side-menu" #sideMenu>
+
+            <li class="menu-title">{{ "menu.navigation" | translate }}</li>
+
+            <li>
+                <a routerLink="/" routerLinkActive="active">
+                    <i class="fe-airplay"></i>
+                    <span> {{ "menu.dashboard" | translate }} </span>
+                </a>
+            </li>
+
+            <li *ngIf="user.mc">
+                <a href="javascript: void(0);" class="waves-effect">
+                    <i class="fe-list"></i>
+                    <span> {{ "menu.monitoring" | translate }} </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="nav-second-level collapse" aria-expanded="false">
+                    <li>
+                        <a routerLink="/monitor/seller-pricing" routerLinkActive="active" class="side-nav-link-ref">{{ "menu.seller_pricing" | translate }}</a>
+                    </li>
+                    <li>
+                        <a routerLink="/monitor/product-listing" routerLinkActive="active" class="side-nav-link-ref">{{ "menu.product_listing" | translate }}</a>
+                    </li>                    
+                </ul>
+            </li>
+
+            <li>
+                <a href="javascript: void(0);" class="waves-effect">
+                    <i class="fe-map"></i>
+                    <span> {{ "menu.po_analysis" | translate }} </span>
+                    <span class="menu-arrow"></span>
+                </a>
+                <ul class="nav-second-level collapse" aria-expanded="false">
+                    <li>
+                        <a routerLink="/pos/analysis" routerLinkActive="active" class="side-nav-link-ref">{{ "menu.po_analysis" | translate }}</a>
+                    </li>
+                    <li>
+                        <a routerLink="/pos/rejection" routerLinkActive="active" class="side-nav-link-ref">{{ "menu.po_rejection" | translate }}</a>
+                    </li>                    
+                </ul>
+            </li>
+
+            <li>
+                <a routerLink="/brand-reputation" routerLinkActive="active">
+                    <i class="dripicons-trophy"></i>
+                    <span> Brand Reputation </span>
+                </a>
+            </li>
+
+            <li>
+                <a routerLink="/myaccount" routerLinkActive="active">
+                    <i class="fe-user"></i>
+                    <span> {{ "menu.account" | translate }} </span>
+                </a>
+            </li>
+
+            <li *ngIf="role == 'admin'">
+                <a routerLink="/users" routerLinkActive="active">
+                    <i class="fe-users"></i>
+                    <span> {{ "menu.users" | translate }} </span>
+                </a>
+            </li>
+
+            <li *ngIf="role == 'admin'">
+                <a routerLink="/clients" routerLinkActive="active">
+                    <i class="fe-database"></i>
+                    <span> {{ "menu.client_modules" | translate }} </span>
+                </a>
+            </li>
+
+            <li *ngIf="role == 'admin'">
+                <a routerLink="/asin-management" routerLinkActive="active">
+                    <i class="fe-server"></i>
+                    <span> ASIN </span>
+                </a>
+            </li>
+
+            <li *ngIf="role == 'admin'">
+                <a routerLink="/review-management" routerLinkActive="active">
+                    <i class="fe-check-square"></i>
+                    <span> Reviews </span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+    <!-- End Sidebar -->
+
+    <div class="clearfix"></div>
+</ng-template>
+
+
+<div class="left-side-menu">
+    <div class="slimscroll-menu" appSlimScroll *ngIf="!isCondensed">
+        <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+    </div>
+
+    <div class="slimscroll-menu" *ngIf="isCondensed">
+        <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+    </div>
+</div>
+<!-- Left Sidebar End -->

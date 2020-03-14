@@ -1,0 +1,57 @@
+<div class="account-pages auth-form-container">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6 col-xl-5 card-min-width">
+        <div class="card bg-pattern auth-form-light">
+          <div class="card-body p-4">
+            <!-- Logo -->
+            <div class="text-center w-75 m-auto">
+              <a routerLink="/">
+                <img src="assets/images/logo-dark.png" alt="" class="m-auto">
+              </a>
+              <p class="text-muted mb-4 mt-3">{{ "auth.login_title" | translate }}</p>
+            </div>
+
+            <form class="needs-validation" name="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+              <ngb-alert type="danger" *ngIf="error" [dismissible]="false">{{ error }}</ngb-alert>
+
+              <div class="form-group mb-3">
+                <label for="email">Email</label>
+
+                <input type="email" formControlName="email" class="form-control"
+                  [ngClass]="{ 'is-invalid': submitted && f.email.errors }" id="email" placeholder="Email" />
+
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                  <div *ngIf="f.email.errors.required">Email is required</div>
+                  <div *ngIf="f.email.errors.email">Email must be a valid email address</div>
+                </div>
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="password">{{ "auth.password" | translate}}</label>
+
+                <input type="password" formControlName="password" class="form-control"
+                  [ngClass]="{ 'is-invalid': submitted && f.password.errors }" id="password" placeholder="Password" />
+
+                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                  <div *ngIf="f.password.errors.required">Password is required</div>
+                </div>
+              </div>
+
+              <div class="form-group mb-0 text-center">
+                <button class="btn btn-secondary btn-block" type="submit">{{ "auth.signin" | translate}}</button>
+              </div>
+            </form>
+
+          </div> <!-- end card-body -->
+        </div>
+        <!-- end card -->
+
+      </div> <!-- end col -->
+    </div>
+    <!-- end row -->
+  </div>
+  <!-- end container -->
+</div>
+<!-- end page -->

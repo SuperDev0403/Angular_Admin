@@ -1,0 +1,240 @@
+<div class="container-fluid">
+  <app-page-title [title]= "title" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-right">
+                <a href="javscript: void(0);" class="btn btn-danger mb-2"
+                  (click)="addCModal(content_client)"><i class="mdi mdi-plus-circle mr-1"></i>{{ "main.addNewClient" | translate }}</a>
+              </div>
+            </div><!-- end col-->
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-centered table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>{{ "main.client_name" | translate }}</th>
+                  <th>{{ "main.platform_type" | translate }}</th>
+                  <th>CIF</th>
+                  <th>{{ "main.status" | translate }}</th>
+                  <th style="width: 82px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let client of clients">
+                  <td>
+                    {{client.client_name}}
+                  </td>
+                  <td>
+                    {{client.client_type_platform}}
+                  </td>
+                  <td>
+                    {{client.client_cif}}
+                  </td>
+                  <td>
+                    {{status[client.client_is_active]}}
+                  </td>
+                  <td>
+                    <a href="javascript:void(0);" (click)="editCModal(client, content_client)" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
+                    <a href="javascript:void(0);" (click)="removeClient(client)" class="action-icon"> <i class="mdi mdi-delete"></i></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-right">
+                <a href="javscript: void(0);" class="btn btn-danger mb-2"
+                  (click)="addModal(content)"><i class="mdi mdi-plus-circle mr-1"></i>{{ "main.addNewUser" | translate }}</a>
+              </div>
+            </div><!-- end col-->
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-centered table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>{{ "main.name" | translate }}</th>
+                  <th>{{ "main.email" | translate }}</th>
+                  <th>{{ "main.client_name" | translate }}</th>
+                  <th>{{ "main.role" | translate }}</th>
+                  <th>{{ "main.status" | translate }}</th>
+                  <th style="width: 82px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td>
+                    {{user.name}}
+                  </td>
+                  <td>
+                    {{user.email}}
+                  </td>
+                  <td>
+                    {{user.client_name}}
+                  </td>
+                  <td>
+                    {{user.role}}
+                  </td>
+                  <td>
+                    {{status[user.is_active]}}
+                  </td>
+                  <td>
+                    <a href="javascript:void(0);" (click)="editModal(user, content)" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
+                    <a href="javascript:void(0);" (click)="removeUser(user)" class="action-icon"> <i class="mdi mdi-delete"></i></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User modal  -->
+<ng-template #content role="document" let-modal="close">
+  <div class="modal-header bg-dark">
+    <h4 *ngIf="!currentUser.id" class="modal-title text-white">{{ "main.addNewUser" | translate }}</h4>
+    <h4 *ngIf="currentUser.id" class="modal-title text-white">{{ "main.editUser" | translate }}</h4>
+    <button type="button" class="close text-white" aria-label="Close" (click)="modal('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body p-3">
+    <div class="text-left">
+      <form [formGroup]="validationform">
+
+        <div class="form-group">
+          <label for="name">{{ "main.name" | translate }}</label>
+          <input type="text" class="form-control" id="name" placeholder="" formControlName="name" [(ngModel)]="currentUser.name"
+            [ngClass]="{'is-invalid': submitted && form.name.errors}">
+          <div *ngIf="submitted && form.name.errors" class="invalid-feedback">
+            <span *ngIf="form.name.errors.required">required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">{{ "main.email" | translate }}</label>
+          <input class="form-control" id="email" placeholder="" formControlName="email" [(ngModel)]="currentUser.email"
+            [ngClass]="{'is-invalid': submitted && form.email.errors}">
+          <div *ngIf="submitted && form.email.errors" class="invalid-feedback">
+            <span *ngIf="form.email.errors.required">required</span>
+            <span *ngIf="form.email.errors.pattern">invalid email</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">{{ "main.password" | translate }}</label>
+          <input type="password" class="form-control" id="password" placeholder="" formControlName="password" [(ngModel)]="currentUser.password"
+            [ngClass]="{'is-invalid': submitted && form.password.errors}">
+          <div *ngIf="!currentUser.id && submitted && form.password.errors" class="invalid-feedback">
+            <span *ngIf="form.password.errors.required">required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="client_name">{{ "main.client_name" | translate }}</label>
+          <select class="custom-select" id="client_name" (change)="onChangeClientname($event.target.value)">
+            <option *ngFor="let client of clients" value={{client.client_id}} [selected]="client.client_id === currentUser.client_id">
+              {{client.client_name}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="user_role">{{ "main.role" | translate }}</label>
+          <select class="custom-select" id="user_role" (change)="onChangeRole($event.target.value)">
+            <option *ngFor="let role of roles" value={{role}} [selected]="role === currentUser.role">
+              {{role}}
+            </option>
+          </select>
+        </div>
+
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="status" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentUser.is_active">
+          <label class="custom-control-label" for="status">{{ "main.status" | translate }}</label>
+        </div>
+
+        <div class="text-right">
+          <button *ngIf="!currentUser.id" type="button" class="btn btn-success" (click)="addNewUser()">{{ "main.add" | translate}}</button>
+          <button *ngIf="currentUser.id" type="button" class="btn btn-success" (click)="editUser()">{{ "main.edit" | translate}}</button>
+          <button type="button" class="btn btn-danger ml-1"
+            (click)="modal('close click')">{{ "main.cancel" | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Client modal  -->
+<ng-template #content_client role="document" let-modal="close">
+  <div class="modal-header bg-dark">
+    <h4 *ngIf="!currentClient.client_id" class="modal-title text-white">{{ "main.addNewClient" | translate }}</h4>
+    <h4 *ngIf="currentClient.client_id" class="modal-title text-white">{{ "main.editClient" | translate }}</h4>
+    <button type="button" class="close text-white" aria-label="Close" (click)="modal('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body p-3">
+    <div class="text-left">
+      <form [formGroup]="validationform_client">
+
+        <div class="form-group">
+          <label for="client_name">{{ "main.client_name" | translate }}</label>
+          <input type="text" class="form-control" id="client_name" placeholder="" formControlName="client_name" [(ngModel)]="currentClient.client_name"
+            [ngClass]="{'is-invalid': submitted_client && form_client.client_name.errors}">
+          <div *ngIf="submitted_client && form_client.client_name.errors" class="invalid-feedback">
+            <span *ngIf="form_client.client_name.errors.required">required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="platform_type">{{ "main.platform_type" | translate }}</label>
+          <select class="custom-select" id="platform_type" (change)="onChangeClienttype($event.target.value)">
+            <option *ngFor="let client_type of client_types" value={{client_type.client_type_id}} [selected]="client_type.client_type_id === currentClient.client_type_id">
+              {{client_type.client_type_platform}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="client_cif">CIF</label>
+          <input type="text" class="form-control" id="client_cif" placeholder="" formControlName="client_cif" [(ngModel)]="currentClient.client_cif">
+        </div>
+
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="status" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentClient.client_is_active">
+          <label class="custom-control-label" for="status">{{ "main.status" | translate }}</label>
+        </div>
+
+        <div class="text-right">
+          <button *ngIf="!currentClient.client_id" type="button" class="btn btn-success" (click)="addNewClient()">{{ "main.add" | translate}}</button>
+          <button *ngIf="currentClient.client_id" type="button" class="btn btn-success" (click)="editClient()">{{ "main.edit" | translate}}</button>
+          <button type="button" class="btn btn-danger ml-1"
+            (click)="modal('close click')">{{ "main.cancel" | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

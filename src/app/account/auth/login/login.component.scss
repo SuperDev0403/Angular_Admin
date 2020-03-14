@@ -1,0 +1,32 @@
+.auth-form-light {
+    background: #38414a !important;
+}
+
+.card-min-width {
+    min-width: 500px;
+}
+
+.auth-form-light {
+    background-image: url("/assets/images/bg-pattern-2.png") !important;
+    background-size: cover !important;
+    background-color: #333333 !important;
+    min-width: 450px;
+    input{
+        background: white !important;
+    }
+    img {
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    /* Login h6 white text */
+    h6 {
+    	color: #fff;
+    }
+}
+
+.auth-form-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}

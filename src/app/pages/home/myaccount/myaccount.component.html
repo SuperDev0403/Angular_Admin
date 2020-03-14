@@ -1,0 +1,30 @@
+<div class="container-fluid">
+  <app-page-title [title]="title" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="">{{ "auth.old_password" | translate }}</label>
+                    <input type="password" class="form-control" [(ngModel)]="old_password">
+                </div>
+                <div class="form-group">
+                    <label for="">{{ "auth.new_password" | translate }}</label>
+                    <input type="password" class="form-control" [(ngModel)]="new_password">
+                </div>
+                <div class="form-group">
+                    <label for="">{{ "auth.new_password_confirm" | translate }}</label>
+                    <input type="password" class="form-control" [(ngModel)]="new_password_confirm">
+                </div>
+                <div class="form-group" *ngIf="error">
+                    <p class="text-danger">{{ error }}</p>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-light" (click)="updatePassword()">{{ "auth.update" | translate }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>

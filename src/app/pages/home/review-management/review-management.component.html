@@ -1,0 +1,247 @@
+<div class="container-fluid">
+  <app-page-title [title]="title" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+  <div class="row">
+    <div class="col-12">
+      <div class="row">
+        <div class="col-12 text-center mt-5" *ngIf="loading">
+          <img src="assets/images/loading.gif" alt="" class="loading">
+        </div>
+      </div>
+      <div class="card" *ngIf="!loading">
+        <div class="card-body">
+          <div class="row mb-2">
+            <form class="form-inline d-flex">
+              <div class="form-group mb-2 ml-2">
+                <label class="sr-only">Search</label>
+                <input type="search" class="form-control" placeholder="Search ASIN..." [(ngModel)]="service.searchTerm"
+                  name="search">
+              </div>
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="client-select" class="mr-2">Client</label>
+                <select class="custom-select" id="client-select"
+                  (change)="service.onChangeFilterclient($event.target.value)">
+                  <option selected value="0">All</option>
+                  <option *ngFor="let client of clients" value={{client.client_id}}>{{client.client_name}}</option>
+                </select>
+              </div>
+              <!-- <div class="form-group mx-sm-3 mb-2 d-flex stars_rating">
+                <label for="star-select" class="mr-2">Stars</label>
+                <mat-form-field class="example-chip-list">
+                  <mat-chip-list #chipList aria-label="Fruit selection">
+                    <mat-chip *ngFor="let fruit of fruits" [selectable]="selectable" [removable]="removable"
+                      (removed)="remove(fruit)">
+                      {{fruit}}
+                      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="stars..." #fruitInput [formControl]="fruitCtrl" [matAutocomplete]="auto"
+                      [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                      (matChipInputTokenEnd)="service.add($event)"
+                      (change)="service.onChangeFilterstars($event.target.value)">
+                  </mat-chip-list>
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                    <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
+                      {{fruit}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div> -->
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="stars-select" class="mr-2">Stars</label>
+                <select class="custom-select" id="stars-select"
+                  (change)="service.onChangeFilterstars($event.target.value)">
+                  <option value="0" selected>All</option>
+                  <option value="1">0</option>
+                  <option value="2">1</option>
+                  <option value="3">2</option>
+                  <option value="4">3</option>
+                  <option value="5">4</option>
+                  <option value="6">5</option>
+                </select>
+              </div>
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="status-select" class="mr-2">Status</label>
+                <select class="custom-select" id="status-select"
+                  (change)="service.onChangeFilterstatus($event.target.value)">
+                  <option value="0" selected>New</option>
+                  <option value="1">Done</option>
+                  <option value="2">Work in progress</option>
+                </select>
+              </div>
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="review-select" class="mr-2">Review verified</label>
+                <select class="custom-select" id="review-select"
+                  (change)="service.onChangeFiltername($event.target.value)">
+                  <option value="0" selected>Yes</option>
+                  <option value="1">No</option>
+                </select>
+              </div>
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="market-select" class="mr-2">Marketplace</label>
+                <select class="custom-select" id="market-select"
+                  (change)="service.onChangeFiltermarket($event.target.value)">
+                  <option selected value="0">All</option>
+                  <option *ngFor="let marketplace of marketplaces" value={{marketplace.marketplace_id}}>
+                    {{marketplace.marketplace_code}}</option>
+                </select>
+              </div>
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="date-select" class="mr-2">Date created:</label>
+                From
+                <div class="input-group input-group-sm mr-2 ml-2">
+                  <input type="text" class="form-control border-gray" id="from-daterange" dateFormat="MMM dd, yyyy"
+                    placeholder="{{monthbefore | date: 'yyyy-MM-dd'}}" name="dp" ngbDatepicker #e="ngbDatepicker"
+                    [(ngModel)]="frommonth_topten" (selectedChanged)="service.onDate($event)">
+
+                  <div class="input-group-append">
+                    <span class="input-group-text bg-blue border-blue text-white">
+                      <i class="mdi mdi-calendar-range font-13" (click)="e.toggle()"></i>
+                    </span>
+                  </div>
+                </div>
+                To
+                <div class="input-group input-group-sm ml-2">
+                  <input type="text" class="form-control border-gray" id="to-daterange" dateFormat="MMM dd, yyyy"
+                    placeholder="{{currentDate | date: 'yyyy-MM-dd'}}" name="dp" ngbDatepicker #d="ngbDatepicker">
+
+                  <div class="input-group-append">
+                    <span class="input-group-text bg-blue border-blue text-white">
+                      <i class="mdi mdi-calendar-range font-13" (click)="d.toggle()"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group mx-sm-3 mb-2">
+                <label class="d-inline-flex align-items-center">Show
+                  <select name="tickets-table_length" aria-controls="tickets-table" name="pageSize"
+                    [(ngModel)]="service.pageSize"
+                    class="custom-select custom-select-sm form-control form-control-sm mx-2">
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="25">25</option>
+                    <option [ngValue]="50">50</option>
+                    <option [ngValue]="100">100</option>
+                  </select> entries</label>
+              </div>
+            </form>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-centered table-borderless table-hover mb-0" [id]="reviewtable">
+              <thead class="thead-light">
+                <tr>
+                  <div class="row">
+                    <th class="col-1 text-center">Client name</th>
+                    <th class="col-1 text-center">ASIN</th>
+                    <th class="col-1 text-center">Marketplace</th>
+                    <th class="col-1 text-center">Rating</th>
+                    <th class="col-1 text-center">Product thumbnail</th>
+                    <th class="col-2 text-center">Date created</th>
+                    <th class="col-2 text-center">Title(Body)</th>
+                    <th class="col-1 text-center">Profile name</th>
+                    <th class="col-1 text-center">Status</th>
+                    <th class="col-1 text-center">Link to review</th>
+                  </div>
+
+                </tr>
+
+              </thead>
+              <tbody>
+                <tr *ngFor="let review of tables$ | async">
+                  <div class="row">
+                    <td class="col-1 text-center mt-auto mb-auto">
+                      <ngb-highlight [result]="review.client_name"></ngb-highlight>
+                    </td>
+                    <td class="col-1 text-center mt-auto mb-auto">
+                      <ngb-highlight [term]="service.searchTerm" [result]="review.product_review_asin"></ngb-highlight>
+                    </td>
+                    <td class="col-1 text-center mt-auto mb-auto">
+                      <ngb-highlight [result]="review.marketplace_code"></ngb-highlight>
+                    </td>
+                    <td class="col-1 text-center mt-auto mb-auto text-success">
+                      <ngb-rating [rate]="review.product_review_rating"></ngb-rating>
+                    </td>
+                    <td class="col-1 text-center mt-auto mb-auto">
+                      <ngb-highlight [result]="review.product_module_image_thumbnail"></ngb-highlight>
+                    </td>
+                    <td class="col-2 text-center mt-auto mb-auto">
+                      <ngb-highlight [result]="review.product_review_date"></ngb-highlight>
+                    </td>
+                    <td class="col-2 text-center mt-auto mb-auto">
+                      <ngb-highlight [result]="review.product_review_title" placement="right"
+                        [ngbTooltip]="review.product_review_body" tooltipClass="my-custom-class">
+                      </ngb-highlight>
+                    </td>
+                    <td class="col-1 text-center mt-auto mb-auto">
+                      <ngb-highlight [result]="review.product_review_profile_name"></ngb-highlight>
+                    </td>
+                    <td class="col-1 text-center mt-auto mb-auto">
+                      <ngb-highlight [result]="review.product_review_status_type_name"
+                        [id]="review.product_review_amazon_id">
+                      </ngb-highlight>
+                    </td>
+                    <td class="col-1 text-center mt-auto mb-auto">
+                      <a href="{{ review.product_review_link}}"><img src="assets/images/link.png"></a>
+                    </td>
+                  </div>
+                  <hr class="m-0">
+                  <div class="p-1 d-flex row">
+                    <div class='col-7' [id]="review.product_review_amazon_id">
+                      <ul class='comment_body'>
+                        <li class="d-flex" *ngFor="let note of notes | orderBy: order : false : true">
+                          <p class="mr-1" *ngIf="note.product_review_amazon_id==review.product_review_amazon_id">
+                            - {{note.product_review_note}}</p>
+                          <p *ngIf="note.product_review_amazon_id==review.product_review_amazon_id">
+                            ({{note.product_review_datetime_created}})</p>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class='col-5'>
+                      <div class="status_btn_group mb-1">
+                        <button class="pt-0 pb-0 pl-1 pr-1 btn btn-success mr-2" (click)="doneClick($event)"
+                          [id]="review.product_review_amazon_id">Done</button>
+                        <button class="pt-0 pb-0 pl-1 pr-1 btn btn-info mr-2" (click)="workClick($event)"
+                          [id]="review.product_review_amazon_id">Work in
+                          progress</button>
+                        <button class="btn_add btn btn-primary" (click)="addClick($event)"
+                          [id]="review.product_review_amazon_id">Add note</button>
+                      </div>
+                      <div class='comment_group d-flex'>
+                        <div [id]="review.product_review_amazon_id" class="comment">
+                          <input type="text" [id]="review.product_review_amazon_id" name="c_cont" class='c_cont mb-1'
+                            required>
+                          <div class="d-flex">
+                            <button class="pt-0 pb-0 pl-1 pr-1 mr-1 btn btn-light ml-auto" (click)="cancelClick($event)"
+                              [id]="review.product_review_amazon_id">Cancel</button>
+                            <button class="pt-0 pb-0 pl-1 pr-1 btn btn-danger" (click)="saveClick($event)"
+                              [id]="review.product_review_amazon_id">Save</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row justify-content-md-between align-items-md-center mt-2">
+          <div class="col-sm-12 col-md-5 ml-4">
+            <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">Showing from
+              {{service.startIndex}} to
+              {{service.endIndex}} of {{service.totalRecords}}
+              records
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-5 mr-4">
+            <div class="text-md-right float-md-right">
+              <ngb-pagination [collectionSize]="total$ | async" [(page)]="service.page" [pageSize]="service.pageSize"
+                [maxSize]="10">
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

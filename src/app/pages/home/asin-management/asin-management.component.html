@@ -1,0 +1,179 @@
+<div class="container-fluid">
+  <app-page-title [title]= "title" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="row">
+        <div class="col-12 text-center mt-5" *ngIf="loading">
+            <img src="assets/images/loading.gif" alt="" class="loading">
+        </div>
+      </div>
+        <div class="card"  *ngIf="!loading">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-lg-7">
+                        <form class="form-inline">
+                            <div class="form-group mb-2">
+                                <label class="sr-only">Search</label>
+                                <input type="search" class="form-control" name="searchTerm" placeholder="Search..."
+                                    [(ngModel)]="service.searchTerm">
+                            </div>
+                            <div class="form-group mx-sm-3 mb-2">
+                                <label for="status-select" class="mr-2">Filter by</label>
+                                <select class="custom-select" id="status-select" (change)="service.onChangeFiltername($event.target.value)">
+                                    <option value="0" selected>Choose...</option>
+                                    <option value="1">Client</option>
+                                    <option value="2">ASIN</option>
+                                    <option value="3">Marketplace</option>
+                                    <option value="4">Price Monitoring</option>
+                                    <option value="5">Review Monitoring</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="text-lg-right">
+                            <button type="button" (click)="addModal(content)" class="btn btn-danger mb-2 mr-2"><i
+                                    class="mdi mdi-basket mr-1"></i> Add New Module</button>
+                            <button type="button" class="btn btn-light waves-effect mb-2 mr-2" (click)="fileInput.click()" [disabled]="importing">
+                              <span *ngIf="importing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                              <span>Import</span>
+                              <input #fileInput type="file" (change)="handleFileSelect($event)" style="display:none;" accept=".csv"/>
+                            </button>
+                            <button type="button" class="btn btn-light waves-effect mb-2 mr-2"  (click)="exportCSV()">Export</button>
+                        </div>
+                    </div><!-- end col-->
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-centered mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>{{ "main.client_name" | translate }}</th>
+                                <th>ASIN</th>
+                                <th>MK</th>
+                                <th>MSRP</th>
+                                <th>{{ "main.price" | translate }}</th>
+                                <th>{{ "main.reviews" | translate }}</th>
+                                <th style="width: 125px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let table of tables$ | async">
+                                <td>
+                                  <ngb-highlight [result]="table.client_name" [term]="service.searchTerm"></ngb-highlight>
+                                </td>
+                                <td>
+                                  <ngb-highlight [result]="table.product_asin" [term]="service.searchTerm"></ngb-highlight>
+                                </td>
+                                <td>
+                                  <ngb-highlight [result]="table.marketplace_code" [term]="service.searchTerm"></ngb-highlight>
+                                </td>
+                                <td>
+                                  <ngb-highlight [result]="table.product_module_price_msrp" [term]="service.searchTerm"></ngb-highlight>
+                                </td>
+                                <td >
+                                  <ngb-highlight *ngIf="table.product_module_is_price=='1'" result="Enabled" [term]="service.searchTerm"></ngb-highlight>
+                                  <ngb-highlight *ngIf="table.product_module_is_price=='0' || !table.product_module_is_price" result="Disabled" [term]="service.searchTerm"></ngb-highlight>
+                                </td>
+                                <td >
+                                  <ngb-highlight *ngIf="table.product_module_is_review=='1'" result="Enabled" [term]="service.searchTerm"></ngb-highlight>
+                                  <ngb-highlight *ngIf="table.product_module_is_review=='0' || !table.product_module_is_review" result="Disabled" [term]="service.searchTerm"></ngb-highlight>
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0);" (click)="editModal(table, content)" class="action-icon"><i
+                                            class="mdi mdi-square-edit-outline"></i></a>
+                                    <a href="javascript:void(0);" (click)="removeASIN(table)" class="action-icon"> <i
+                                            class="mdi mdi-delete"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- End table -->
+          <div class="row justify-content-md-between align-items-md-center mt-2">
+            <div class="col-sm-12 col-md-5 ml-1">
+              <div class="dataTables_info mb-2" id="tickets-table_info" role="status" aria-live="polite">Showing from
+                {{service.startIndex}} to
+                {{service.endIndex}} of {{service.totalRecords}}
+                records
+              </div>
+            </div>
+            <!-- Pagination -->
+            <div class="col-sm-12 col-md-5 mr-1">
+              <div class="text-md-right float-md-right">
+                <ngb-pagination [collectionSize]="total$ | async" [(page)]="service.page" [pageSize]="service.pageSize" [maxSize]="5">
+                </ngb-pagination>
+              </div>
+            </div>
+            <!-- End Pagination -->
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<ng-template #content role="document" let-modal="close">
+  <div class="modal-header bg-dark">
+    <h4 *ngIf="!currentAsin.product_module_id" class="modal-title text-white">Add New Module</h4>
+    <h4 *ngIf="currentAsin.product_module_id" class="modal-title text-white">Edit Module</h4>
+    <button type="button" class="close text-white" aria-label="Close" (click)="modal('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body p-3">
+    <div class="text-left">
+      <form [formGroup]="validationform">
+
+        <div class="form-group">
+          <label for="client_name">{{ "main.client_name" | translate }}</label>
+          <select class="custom-select" id="client_name" (change)="onChangeClientname($event.target.value)" [disabled]="currentAsin.product_module_id">
+            <option *ngFor="let client of clients" value={{client.client_id}} [selected]="client.client_id === currentAsin.client_id">
+              {{client.client_name}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="product_asin">ASIN</label>
+          <input type="text" class="form-control" id="product_asin" placeholder="" formControlName="product_asin" [readonly]="currentAsin.product_module_id" [(ngModel)]="currentAsin.product_asin"
+            [ngClass]="{'is-invalid': submitted && form.product_asin.errors}">
+          <div *ngIf="submitted && form.product_asin.errors" class="invalid-feedback">
+            <span *ngIf="form.product_asin.errors.required">required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="marketplace">{{ "main.marketplace" | translate }}</label>
+          <select class="custom-select" id="marketplace" (change)="onChangeMarketplacecode($event.target.value)" [disabled]="currentAsin.product_module_id">
+            <option *ngFor="let marketplace of marketplaces" value={{marketplace.marketplace_id}} [selected]="marketplace.marketplace_id === currentAsin.product_module_marketplace_id">
+              {{marketplace.marketplace_code}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="product_module_price_msrp">MSRP</label>
+          <input numeric decimals="2" class="form-control" id="product_module_price_msrp" placeholder="" formControlName="product_module_price_msrp" [(ngModel)]="currentAsin.product_module_price_msrp">
+        </div>
+
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentAsin.product_module_is_price">
+          <label class="custom-control-label" for="price">Price</label>
+        </div>
+
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="reviews" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentAsin.product_module_is_review">
+          <label class="custom-control-label" for="reviews">Reviews</label>
+        </div>
+
+        <div class="text-right">
+          <button *ngIf="!currentAsin.product_module_id" type="button" class="btn btn-success" (click)="addNewASIN()">{{ "main.add" | translate}}</button>
+          <button *ngIf="currentAsin.product_module_id" type="button" class="btn btn-success" (click)="editAsin()">{{ "main.edit" | translate}}</button>
+          <button type="button" class="btn btn-danger ml-1"
+            (click)="modal('close click')">{{ "main.cancel" | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

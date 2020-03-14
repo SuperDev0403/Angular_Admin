@@ -1,0 +1,31 @@
+img.loading{
+    width:  50px;
+    height: 50px;
+    margin: auto;
+}
+
+img.seller {
+    width: 15px !important;
+    height: 18px !important;
+}
+
+img.flag {
+    width: 20px !important;
+    height: 15px !important;
+}
+
+img.thumbnail {
+    max-width: 40px !important;
+    max-height: 40px!important;
+}
+
+img.product_photoUri {
+    max-width: 100px;
+    height: auto !important;
+}
+
+.custom-badge {
+    border-radius: 12%;
+    padding-left: 4px;
+    padding-right: 4px;
+}

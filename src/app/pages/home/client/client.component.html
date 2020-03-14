@@ -1,0 +1,135 @@
+<div class="container-fluid">
+  <app-page-title [title]= "title" [breadcrumbItems]="breadCrumbItems"></app-page-title>
+
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row mb-2">
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-8">
+              <div class="text-sm-right">
+                <a href="javscript: void(0);" class="btn btn-danger mb-2"
+                  (click)="addModal(content)"><i class="mdi mdi-plus-circle mr-1"></i>{{ "main.addNewClientmodule" | translate }}</a>
+              </div>
+            </div><!-- end col-->
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-centered table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>{{ "main.client_name" | translate }}</th>
+                  <th>MK</th>
+                  <th>{{ "main.status" | translate }}</th>
+                  <th>{{ "main.price" | translate }}</th>
+                  <th>{{ "main.reviews" | translate }}</th>
+                  <th>{{ "main.content" | translate }}</th>
+                  <th>{{ "main.answers" | translate }}</th>
+                  <th style="width: 82px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let client_module of client_modules">
+                  <td>
+                    {{client_module.client_name}}
+                  </td>
+                  <td>
+                    {{client_module.marketplace_code}}
+                  </td>
+                  <td>
+                    {{status[client_module.client_module_is_active]}}
+                  </td>
+                  <td>
+                    {{enabled[client_module.client_module_is_price]}}
+                  </td>
+                  <td>
+                    {{enabled[client_module.client_module_is_review]}}
+                  </td>
+                  <td>
+                    {{enabled[client_module.client_module_is_content]}}
+                  </td>
+                  <td>
+                    {{enabled[client_module.client_module_is_answers]}}
+                  </td>
+                  <td>
+                    <a href="javascript:void(0);" (click)="editModal(client_module, content)" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
+                    <a href="javascript:void(0);" (click)="removeClientmodule(client_module)" class="action-icon"> <i class="mdi mdi-delete"></i></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contacts model  -->
+<ng-template #content role="document" let-modal="close">
+  <div class="modal-header bg-dark">
+    <h4 *ngIf="!currentClientmodule.client_module_id" class="modal-title text-white">{{ "main.addNewClientmodule" | translate }}</h4>
+    <h4 *ngIf="currentClientmodule.client_module_id" class="modal-title text-white">{{ "main.editClientmodule" | translate }}</h4>
+    <button type="button" class="close text-white" aria-label="Close" (click)="modal('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body p-3">
+    <div class="text-left">
+      <form [formGroup]="validationform">
+
+        <div class="form-group">
+          <label for="client_name">{{ "main.client_name" | translate }}</label>
+          <select class="custom-select" id="client_name" (change)="onChangeClientname($event.target.value)" [disabled]="currentClientmodule.client_module_id">
+            <option *ngFor="let client of clients" value={{client.client_id}} [selected]="client.client_id === currentClientmodule.client_module_client_id">
+              {{client.client_name}}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="marketplace">{{ "main.marketplace" | translate }}</label>
+          <select class="custom-select" id="marketplace" (change)="onChangeMarketplacecode($event.target.value)" [disabled]="currentClientmodule.client_module_id">
+            <option *ngFor="let marketplace of marketplaces" value={{marketplace.marketplace_id}} [selected]="marketplace.marketplace_id === currentClientmodule.client_module_marketplace_id">
+              {{marketplace.marketplace_code}}
+            </option>
+          </select>
+        </div>
+
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="status" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentClientmodule.client_module_is_active">
+          <label class="custom-control-label" for="status">{{ "main.status" | translate }}</label>
+        </div>
+
+        <div class="custom-control custom-switch mt-2">
+          <input type="checkbox" class="custom-control-input" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentClientmodule.client_module_is_price">
+          <label class="custom-control-label" for="price">{{ "main.price" | translate }}</label>
+        </div>
+
+        <div class="custom-control custom-switch mt-2">
+          <input type="checkbox" class="custom-control-input" id="reviews" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentClientmodule.client_module_is_review">
+          <label class="custom-control-label" for="reviews">{{ "main.reviews" | translate }}</label>
+        </div>
+
+        <div class="custom-control custom-switch mt-2">
+          <input type="checkbox" class="custom-control-input" id="content" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentClientmodule.client_module_is_content">
+          <label class="custom-control-label" for="content">{{ "main.content" | translate }}</label>
+        </div>
+
+        <div class="custom-control custom-switch mt-2">
+          <input type="checkbox" class="custom-control-input" id="answers" [ngModelOptions]="{standalone: true}" [(ngModel)]="currentClientmodule.client_module_is_answers">
+          <label class="custom-control-label" for="answers">{{ "main.answers" | translate }}</label>
+        </div>
+
+        <div class="text-right">
+          <button *ngIf="!currentClientmodule.client_module_id" type="button" class="btn btn-success" (click)="addClientmodule()">{{ "main.add" | translate}}</button>
+          <button *ngIf="currentClientmodule.client_module_id" type="button" class="btn btn-success" (click)="editClientmodule()">{{ "main.edit" | translate}}</button>
+          <button type="button" class="btn btn-danger ml-1"
+            (click)="modal('close click')">{{ "main.cancel" | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
